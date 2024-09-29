@@ -2,7 +2,7 @@
 
 This repository is Wu Linxian's implementation of [Assignment_01 of DIP](https://github.com/YudongGuo/DIP-Teaching/tree/main/Assignments/01_ImageWarping). 
 
-<img src="pics/DIP_1_.png" alt="alt text" width="800">
+<img src="pics/DIP_1_.png.png" alt="alt text" width="800">
 
 ## Requirements
 
@@ -37,7 +37,7 @@ python run_point_transform.py
 <img src="pics/DIP_1_0_1.png" alt="alt text" width="800">
 
 ### Point Guided Deformation:
-<img src="pics/DIP_2.png" alt="alt text" width="800">
+<img src="pics/DIP_2.png.png" alt="alt text" width="800">
 
 ## Acknowledgement
 
