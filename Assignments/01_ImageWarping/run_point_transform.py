@@ -125,7 +125,7 @@ def point_guided_deformation(image, source_pts, target_pts, alpha=1.0, eps=1e-8)
     valid_y = np.clip(f[:,:,1], 0, image.shape[1]-1).astype(int)
     #cv_warped_image=image[int(f[:,:,0]),int(f[:,:,1])]
     cv_warped_image=image[valid_x,valid_y]
-    cv_warped_image = cv2.resize(cv_warped_image, (image.shape[0],image.shape[1]), interpolation=cv2.INTER_LINEAR)
+    cv_warped_image = cv2.resize(cv_warped_image, (image.shape[1],image.shape[0]), interpolation=cv2.INTER_LINEAR)
     # for i in range(rows):
     #     for j in range(cols):
     #         v_i=min(image.shape[0]-1,i*i_step)
