@@ -2,6 +2,7 @@ import gradio as gr
 from PIL import ImageDraw
 import numpy as np
 import torch
+import math
 
 # Initialize the polygon state
 def initialize_polygon():
@@ -106,9 +107,88 @@ def create_mask_from_points(points, img_h, img_w):
         np.ndarray: Binary mask of shape (img_h, img_w).
     """
     mask = np.zeros((img_h, img_w), dtype=np.uint8)
+    mask1 = np.ones((img_w, img_h), dtype=np.int8)
     ### FILL: Obtain Mask from Polygon Points. 
     ### 0 indicates outside the Polygon.
     ### 255 indicates inside the Polygon.
+
+    n=points.shape[0]
+    for i in range(n-2):
+        create_mask_from_triangle(points0=points[n-1],points1=points[i],points2=points[i+1],mask=mask1)
+    mask=np.where(mask1 > 0, 0, 255).astype(np.uint8).transpose(1,0)
+    return mask
+
+def create_mask_from_triangle(points0, points1, points2,mask):
+    """
+    Creates a binary mask from the given triangle.
+
+    Args:
+        points0: points of shape (n, 2).
+        points1: points of shape (n, 2).
+        points2: points of shape (n, 2).
+        mask: mask of the img.
+
+    Returns:
+        np.ndarray: Binary mask of shape (img_h, img_w).
+    """
+
+    if points1[1]<points0[1]:
+        temp=points0
+        points0=points1
+        points1=temp
+
+    if points2[1]<points0[1]:
+        temp=points0
+        points0=points2
+        points2=temp
+    y_smaller = points2 if abs(points1[1]-points0[1]) > abs(points2[1]-points0[1]) else points1
+    y_bigger = points1 if abs(points1[1]-points0[1]) > abs(points2[1]-points0[1]) else points2
+
+    ### points0[1]==y_bigger[1]==y_smaller[1]
+    if points0[1]==y_bigger[1] :
+        return mask
+    
+    k1=(y_bigger[0]-points0[0])/(y_bigger[1]-points0[1])
+    
+    ###  y_smaller[1]<points0[1]<=y_bigger[1]
+    if y_smaller[1]-points0[1]>0 :
+        k2=(y_smaller[0]-points0[0])/(y_smaller[1]-points0[1])
+        if k2>k1:
+            for i in range (y_smaller[1]-points0[1]):
+                a=int(math.floor(points0[0]+i*k1))
+                b=int(math.floor(points0[0]+i*k2))
+                mask[range(a,b),points0[1]+i]*=-1
+
+            if y_bigger[1]-y_smaller[1]>0 :
+                k3=(y_bigger[0]-y_smaller[0])/(y_bigger[1]-y_smaller[1])
+            for i in range (y_bigger[1]-y_smaller[1]):
+                a=int(math.floor(points0[0]+(i+y_smaller[1]-points0[1])*k1))
+                b=int(math.floor(y_smaller[0]+i*k3))
+                mask[range(a,b),i+y_smaller[1]]*=-1
+        if k2<k1:
+            for i in range (y_smaller[1]-points0[1]):
+                a=int(math.floor(points0[0]+i*k2))
+                b=int(math.floor(points0[0]+i*k1))
+                mask[range(a,b),points0[1]+i]*=-1
+
+            if y_bigger[1]-y_smaller[1]>0 :
+                k3=(y_bigger[0]-y_smaller[0])/(y_bigger[1]-y_smaller[1])
+            for i in range (y_bigger[1]-y_smaller[1]):
+                a=int(math.floor(y_smaller[0]+i*k3))
+                b=int(math.floor(points0[0]+(i+y_smaller[1]-points0[1])*k1))
+                mask[range(a,b),i+y_smaller[1]]*=-1
+    else: ###  y_smaller[1]==points0[1]<y_bigger[1]
+        k3=(y_bigger[0]-y_smaller[0])/(y_bigger[1]-y_smaller[1])
+        if points0[0]<y_smaller[0]:
+            for i in range (y_bigger[1]-y_smaller[1]):
+                a=int(math.floor(points0[0]+i*k1))
+                b=int(math.floor(y_smaller[0]+i*k3))
+                mask[range(a,b),i+y_smaller[1]]*=-1
+        else:
+            for i in range (y_bigger[1]-y_smaller[1]):
+                a=int(math.floor(y_smaller[0]+i*k3))
+                b=int(math.floor(points0[0]+i*k1))
+                mask[range(a,b),i+y_smaller[1]]*=-1
 
     return mask
 
@@ -129,7 +209,21 @@ def cal_laplacian_loss(foreground_img, foreground_mask, blended_img, background_
     loss = torch.tensor(0.0, device=foreground_img.device)
     ### FILL: Compute Laplacian Loss with https://pytorch.org/docs/stable/generated/torch.nn.functional.conv2d.html.
     ### Note: The loss is computed within the masks.
-
+    # 定义拉普拉斯卷积核
+    laplacian_kernel = torch.tensor([[0, 1, 0],
+                                     [1, -4, 1],
+                                     [0, 1, 0]], dtype=torch.float32)
+    laplacian_kernel = laplacian_kernel.view(1, 1, 3, 3)
+    laplacian_kernel = laplacian_kernel.repeat(1, foreground_img.shape[1], 1, 1)
+    laplacian_kernel = laplacian_kernel.to(foreground_img.device).to(foreground_img.dtype)
+    
+    # 计算拉普拉斯损失
+    Laplacian_of_blended_img = torch.nn.functional.conv2d(blended_img, laplacian_kernel, padding=1)
+    Laplacian_of_foreground_img = torch.nn.functional.conv2d(foreground_img, laplacian_kernel, padding=1)
+    
+    # 应用掩码
+    loss = Laplacian_of_blended_img[background_mask.bool()] - Laplacian_of_foreground_img[foreground_mask.bool()]
+    loss = torch.sum(torch.abs(loss.squeeze()))
     return loss
 
 # Perform Poisson image blending
@@ -179,7 +273,7 @@ def blending(foreground_image_original, background_image_original, dx, dy, polyg
     optimizer = torch.optim.Adam([blended_img], lr=1e-3)
 
     # Optimization loop
-    iter_num = 10000
+    iter_num = 100000
     for step in range(iter_num):
         blended_img_for_loss = blended_img.detach() * (1. - bg_mask_tensor) + blended_img * bg_mask_tensor  # Only blending in the mask region
 

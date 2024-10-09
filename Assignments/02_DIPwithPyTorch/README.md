@@ -22,3 +22,13 @@ See [Pix2Pix subfolder](Pix2Pix/).
 ### Requirements:
 - 请自行环境配置，推荐使用[conda环境](https://docs.anaconda.com/miniconda/)
 - 按照模板要求写Markdown版作业报告
+
+Requirements
+To install requirements:
+```basic
+python run_global_transform.py
+```
+- conda create -n DIP_2 Python=3.9
+- conda activate DIP_2
+- conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+- python -m pip install -r requirements.txt

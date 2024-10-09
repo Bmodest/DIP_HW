@@ -50,7 +50,6 @@ def save_images(inputs, targets, outputs, folder_name, epoch, num_images=5):
 
         # Concatenate the images horizontally
         comparison = np.hstack((input_img_np, target_img_np, output_img_np))
-
         # Save the comparison image
         cv2.imwrite(f'{folder_name}/epoch_{epoch}/result_{i + 1}.png', comparison)
 
@@ -145,13 +144,13 @@ def main():
     train_dataset = FacadesDataset(list_file='train_list.txt')
     val_dataset = FacadesDataset(list_file='val_list.txt')
 
-    train_loader = DataLoader(train_dataset, batch_size=100, shuffle=True, num_workers=4)
-    val_loader = DataLoader(val_dataset, batch_size=100, shuffle=False, num_workers=4)
+    train_loader = DataLoader(train_dataset, batch_size=20, shuffle=True, num_workers=4)
+    val_loader = DataLoader(val_dataset, batch_size=20, shuffle=False, num_workers=4)
 
     # Initialize model, loss function, and optimizer
     model = FullyConvNetwork().to(device)
     criterion = nn.L1Loss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.5, 0.999))
+    optimizer = optim.Adam(model.parameters(), lr=0.0005, betas=(0.5, 0.999))
 
     # Add a learning rate scheduler for decay
     scheduler = StepLR(optimizer, step_size=200, gamma=0.2)
