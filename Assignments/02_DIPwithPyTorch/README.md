@@ -33,6 +33,48 @@ python train.py
 
 The provided code will train the model on the [Facades Dataset](https://cmp.felk.cvut.cz/~tylecr1/facade/). You need to use [other datasets](https://github.com/phillipi/pix2pix#datasets) containing more images for better generalization on the validation set.
 
+---
+### Results
+### Poisson Image Editing
+- Foreground Image with Polygon
+
+<img src="data_poission/Foreground Image with Polygon.png" alt="alt text" width="400">
+
+- Background Image with Polygon Overlay
+
+<img src="data_poission/Background Image with Polygon Overlay.png" alt="alt text" width="400">
+
+- Blended Image
+
+<img src="data_poission/Blended Image.png" alt="alt text" width="400">
+
+
+### Pix2Pix
+
+
+- train_results
+
+<img src="Pix2Pix/train_results/epoch_795/result_1.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/train_results/epoch_795/result_2.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/train_results/epoch_795/result_3.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/train_results/epoch_795/result_4.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/train_results/epoch_795/result_5.png" alt="alt text" width="400">
+
+- val_results   
+
+<img src="Pix2Pix/val_results/epoch_795/result_1.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/val_results/epoch_795/result_2.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/val_results/epoch_795/result_3.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/val_results/epoch_795/result_4.png" alt="alt text" width="400">
+
+<img src="Pix2Pix/val_results/epoch_795/result_5.png" alt="alt text" width="400">
 
 
 ## Acknowledgement
