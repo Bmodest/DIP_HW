@@ -28,6 +28,12 @@ To run [Pix2Pix](https://phillipi.github.io/pix2pix/) with [Fully Convolutional 
 ```bash
 cd Pix2Pix
 bash download_facades_dataset.sh
+python train.py
+```
+
+or
+```bash
+cd Pix2Pix
 bash download_cityscapes_dataset.sh
 python train.py
 ```
@@ -56,26 +62,36 @@ The provided code will train the model on the [Facades Dataset](https://cmp.felk
 - train_results
 
 <img src="Pix2Pix/train_results/epoch_795/result_1.png" alt="alt text" width="400">
+<img src="Pix2Pix/train_results/epoch_790/result_1.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/train_results/epoch_795/result_2.png" alt="alt text" width="400">
+<img src="Pix2Pix/train_results/epoch_790/result_2.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/train_results/epoch_795/result_3.png" alt="alt text" width="400">
+<img src="Pix2Pix/train_results/epoch_790/result_3.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/train_results/epoch_795/result_4.png" alt="alt text" width="400">
+<img src="Pix2Pix/train_results/epoch_790/result_4.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/train_results/epoch_795/result_5.png" alt="alt text" width="400">
+<img src="Pix2Pix/train_results/epoch_790/result_5.png" alt="alt text" width="400">
 
 - val_results   
 
 <img src="Pix2Pix/val_results/epoch_795/result_1.png" alt="alt text" width="400">
+<img src="Pix2Pix/val_results/epoch_790/result_1.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/val_results/epoch_795/result_2.png" alt="alt text" width="400">
+<img src="Pix2Pix/val_results/epoch_790/result_2.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/val_results/epoch_795/result_3.png" alt="alt text" width="400">
+<img src="Pix2Pix/val_results/epoch_790/result_3.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/val_results/epoch_795/result_4.png" alt="alt text" width="400">
+<img src="Pix2Pix/val_results/epoch_790/result_4.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/val_results/epoch_795/result_5.png" alt="alt text" width="400">
+<img src="Pix2Pix/val_results/epoch_790/result_5.png" alt="alt text" width="400">
 
 
 ## Acknowledgement
