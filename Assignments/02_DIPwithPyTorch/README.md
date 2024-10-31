@@ -28,6 +28,7 @@ To run [Pix2Pix](https://phillipi.github.io/pix2pix/) with [Fully Convolutional 
 ```bash
 cd Pix2Pix
 bash download_facades_dataset.sh
+bash download_cityscapes_dataset.sh
 python train.py
 ```
 

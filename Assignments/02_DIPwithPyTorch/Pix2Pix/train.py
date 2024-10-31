@@ -150,7 +150,7 @@ def main():
     # Initialize model, loss function, and optimizer
     model = FullyConvNetwork().to(device)
     criterion = nn.L1Loss()
-    optimizer = optim.Adam(model.parameters(), lr=0.0005, betas=(0.5, 0.999))
+    optimizer = optim.Adam(model.parameters(), lr=0.0002, betas=(0.5, 0.999))
 
     # Add a learning rate scheduler for decay
     scheduler = StepLR(optimizer, step_size=200, gamma=0.2)
