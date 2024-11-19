@@ -2,3 +2,5 @@
 Assignments/02_DIPwithPyTorch/Pix2Pix/val_results/epoch_*
 # 忽略 Pix2Pix train_results 下的所有 epoch 目录
 Assignments/02_DIPwithPyTorch/Pix2Pix/train_results/epoch_*
+
+model.py
