@@ -68,16 +68,6 @@ The generator here still uses the [Fully Convolutional Layers](https://arxiv.org
 
 <img src="Pix2Pix/train_results/epoch_795/result_5.png" alt="alt text" width="400">
 
-<img src="Pix2Pix/train_results/epoch_790/result_1.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/train_results/epoch_790/result_3.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/train_results/epoch_790/result_3.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/train_results/epoch_790/result_4.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/train_results/epoch_790/result_5.png" alt="alt text" width="400">
-
 - val_results   
 
 <img src="Pix2Pix/val_results/epoch_795/result_1.png" alt="alt text" width="400">
@@ -89,17 +79,6 @@ The generator here still uses the [Fully Convolutional Layers](https://arxiv.org
 <img src="Pix2Pix/val_results/epoch_795/result_4.png" alt="alt text" width="400">
 
 <img src="Pix2Pix/val_results/epoch_795/result_5.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/val_results/epoch_790/result_1.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/val_results/epoch_790/result_2.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/val_results/epoch_790/result_3.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/val_results/epoch_790/result_4.png" alt="alt text" width="400">
-
-<img src="Pix2Pix/val_results/epoch_790/result_5.png" alt="alt text" width="400">
-
 
 
 # dragGAN with face-alignment
@@ -115,7 +94,7 @@ git clone https://github.com/1adrianb/face-alignment
 pip install -r requirements.txt
 python setup.py install
 
-git clone https://github.com/Zeqiang-Lai/DragGAN.git
+git clone https://github.com/Bmodest/DragGan-HW.git
 cd DragGAN
 pip install -r requirements.txt
 pip install pydantic==1.10.11
