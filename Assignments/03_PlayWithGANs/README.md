@@ -117,25 +117,22 @@ python gradio_app.py --device cpu
 ###  results
 以下每行图片左侧为原始图片，右侧为修改后的图片
 
-闭眼
+| 原始 | 闭眼 |
+|---------|---------|
+| ![](draggan_tmp/0.png) | ![](draggan_tmp/1.png) |
 
-<img src="draggan_tmp/0.png" alt="alt text" width="400">
-<img src="draggan_tmp/1.png" alt="alt text" width="400">
+| 原始 | 瘦脸 |
+|---------|---------|
+| ![](draggan_tmp/0.png) | ![](draggan_tmp/2.png) |
 
-瘦脸
+| 原始 | 大眼 |
+|---------|---------|
+| ![](draggan_tmp/0.png) | ![](draggan_tmp/3.png) |
 
-<img src="draggan_tmp/0.png" alt="alt text" width="400">
-<img src="draggan_tmp/2.png" alt="alt text" width="400">
+| 原始 | 微笑 |
+|---------|---------|
+| ![](draggan_tmp/0.png) | ![](draggan_tmp/4.png) |
 
-大眼
-
-<img src="draggan_tmp/0.png" alt="alt text" width="400">
-<img src="draggan_tmp/3.png" alt="alt text" width="400">
-
-微笑
-
-<img src="draggan_tmp/0.png" alt="alt text" width="400">
-<img src="draggan_tmp/4.png" alt="alt text" width="400">
 
 
 ## Acknowledgement
