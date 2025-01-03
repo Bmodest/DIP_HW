@@ -112,7 +112,8 @@ class GaussianModel(nn.Module):
         # Compute covariance
         ### FILL:
         ### Covs3d = ...
-        
+        Covs3d = R @ S @ S.transpose(-2, -1) @ R.transpose(-2, -1)
+
         return Covs3d
 
     def get_gaussian_params(self) -> GaussianParameters:

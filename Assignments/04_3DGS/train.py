@@ -9,6 +9,7 @@ from tqdm import tqdm
 from dataclasses import dataclass
 import cv2
 import os
+import warnings
 
 from gaussian_model import GaussianModel
 from gaussian_renderer import GaussianRenderer
@@ -69,13 +70,46 @@ class GaussianTrainer:
         
         for b in range(rendered.shape[0]):
             base_name = Path(image_paths[b]).stem
+
             rendered_img = (rendered[b] * 255).clip(0, 255).astype(np.uint8)
             gt_img = (gt[b] * 255).clip(0, 255).astype(np.uint8)
             rendered_img = cv2.cvtColor(rendered_img, cv2.COLOR_RGB2BGR)
             gt_img = cv2.cvtColor(gt_img, cv2.COLOR_RGB2BGR)
+
+            # gt_img=rendered_img
+            # rendered_img=np.zeros_like(gt_img)
+            
             comparison = np.concatenate([gt_img, rendered_img], axis=1)
             output_path = epoch_dir / f"{base_name}.png"
             cv2.imwrite(str(output_path), comparison)
+            # # 定义平移量，假设向上移动100个像素
+            # tx = -15  # 水平方向上的移动量（左移为负，右移为正）
+            # ty = 0  # 垂直方向上的移动量（上移为负，下移为正）
+
+            # # 构建平移矩阵
+            # translation_matrix = np.float32([[1, 0, tx], [0, 1, ty]])
+
+            # # 获取图像尺寸
+            # height, width = rendered_img.shape[:2]
+
+            # # 应用仿射变换
+            # translated_imgL = cv2.warpAffine(rendered_img, translation_matrix, (width, height))
+            # output_path = epoch_dir / f"{base_name}L.png"
+            # cv2.imwrite(str(output_path), translated_imgL)
+            # # 定义平移量，假设向上移动100个像素
+            # tx = 15  # 水平方向上的移动量（左移为负，右移为正）
+            # ty = 0  # 垂直方向上的移动量（上移为负，下移为正）
+
+            # # 构建平移矩阵
+            # translation_matrix = np.float32([[1, 0, tx], [0, 1, ty]])
+
+            # # 获取图像尺寸
+            # height, width = rendered_img.shape[:2]
+
+            # # 应用仿射变换
+            # translated_imgR = cv2.warpAffine(rendered_img, translation_matrix, (width, height))
+            # output_path = epoch_dir / f"{base_name}R.png"
+            # cv2.imwrite(str(output_path), translated_imgR)
 
     def save_checkpoint(self, epoch: int):
         """Save model checkpoint"""
@@ -193,6 +227,7 @@ class GaussianTrainer:
     def train(self, train_loader: DataLoader):
         """Main training loop"""
         # Select fixed indices for debugging
+        np.random.seed(1)
         if self.debug_indices is None:
             dataset_size = len(train_loader.dataset)
             self.debug_indices = np.random.choice(

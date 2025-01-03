@@ -48,14 +48,42 @@ class GaussianRenderer(nn.Module):
         J_proj = torch.zeros((N, 2, 3), device=means3D.device)
         ### FILL:
         ### J_proj = ...
+        # 检查 means3D[:, 2] 是否包含零值
+        if torch.any(torch.abs(cam_points[:, 2])<1e-5):
+            print("Warning: Found zero depth values in the point cloud.")
+            print(torch.min(torch.abs(cam_points[:, 2])))
+
+        # 缓存中间结果
+        inv_z = 1 / cam_points[:, 2]
+        z_squared = cam_points[:, 2] ** 2
+
+        J_proj[:, 0, 0] = inv_z*K[0, 0]
+        J_proj[:, 0, 1] = 0
+        J_proj[:, 0, 2] = -cam_points[:, 0] / z_squared*K[0, 0]
+        J_proj[:, 1, 0] = 0
+        J_proj[:, 1, 1] = inv_z*K[1, 1]
+        J_proj[:, 1, 2] = -cam_points[:, 1] / z_squared*K[1, 1]
         
+        if torch.any(torch.isnan(J_proj)):
+            print("Warning: Found NaN values in the Jacobian matrix.")
         # Transform covariance to camera space
         ### FILL: Aplly world to camera rotation to the 3d covariance matrix
         ### covs_cam = ...  # (N, 3, 3)
+        covs_cam = R @ covs3d @ R.T
         
         # Project to 2D
         covs2D = torch.bmm(J_proj, torch.bmm(covs_cam, J_proj.permute(0, 2, 1)))  # (N, 2, 2)
         
+        if torch.any(torch.det(covs2D).unsqueeze(-1).unsqueeze(-1)<1e-10):
+            print(torch.min(torch.det(covs3d).unsqueeze(-1).unsqueeze(-1)))
+            print(torch.min(torch.det(R).unsqueeze(-1).unsqueeze(-1)))
+            print(torch.min(torch.det(covs_cam).unsqueeze(-1).unsqueeze(-1)))
+            print(torch.min(torch.det(covs_cam + 1e-4 * torch.eye(3, device=covs2D.device).unsqueeze(0)).unsqueeze(-1).unsqueeze(-1)))
+            
+            print(torch.min(torch.det(covs2D).unsqueeze(-1).unsqueeze(-1)))
+            print(torch.min(cam_points[:, 2]))
+            print(torch.max(cam_points[:, 2]))
+            print("Warning: Found abs(det)<1e-10 in the determinant.")
         return means2D, covs2D, depths
 
     def compute_gaussian_values(
@@ -77,7 +105,37 @@ class GaussianRenderer(nn.Module):
         # Compute determinant for normalization
         ### FILL: compute the gaussian values
         ### gaussian = ... ## (N, H, W)
-    
+        # det = torch.det(covs2D).unsqueeze(-1).unsqueeze(-1)
+
+        # eye_matrix = torch.eye(2, device=covs2D.device).unsqueeze(0)
+        # inv_covs2D = torch.linalg.solve(covs2D, eye_matrix)
+        # result =(dx.unsqueeze(3)@inv_covs2D.reshape(N, 1, 1, 2, 2)@dx.unsqueeze(4))
+        # result = result.squeeze(-1).squeeze(-1)
+        # print(det.shape)
+        # print(result.shape)
+        # gaussian= torch.exp(-result/2)/2/torch.pi/torch.sqrt(det)
+
+        # 计算 Cholesky 分解
+        try:
+            L = torch.linalg.cholesky(covs2D)
+        except RuntimeError as e:
+            raise ValueError("Cholesky decomposition failed. Check the input covariance matrices.") from e
+        # 计算行列式 (N, 1, 1)
+        det = torch.det(covs2D).unsqueeze(-1).unsqueeze(-1)
+        # 检查行列式是否为零
+        if torch.any(det <= 0):
+            raise ValueError("Detected non-positive definite covariance matrix.")
+        # 检查行列式是否为零
+        if torch.any(det <= 0):
+            raise ValueError("Detected non-positive definite covariance matrix.")
+
+        # 计算逆矩阵
+        inv_covs2D = torch.cholesky_inverse(L)
+
+        # 计算高斯值 (N, H, W)
+        result = (dx.unsqueeze(3) @ inv_covs2D.unsqueeze(1).unsqueeze(1) @ dx.unsqueeze(4))
+        result = result.squeeze(-1).squeeze(-1)
+        gaussian = torch.exp(-0.5 * result) / (2 * torch.pi * torch.sqrt(det))
         return gaussian
 
     def forward(
@@ -120,7 +178,11 @@ class GaussianRenderer(nn.Module):
         # 7. Compute weights
         ### FILL:
         ### weights = ... # (N, H, W)
-        
+        alphas=torch.cat([torch.zeros_like(alphas[:1, ...]), alphas], dim=0)
+        T=torch.cumprod(1-alphas[:-1, ...],dim=0)
+        weights = T*alphas[1:, ...]
+        if torch.any(torch.isnan(weights)):
+            print("Warning: Found NaN values in the weights.")
         # 8. Final rendering
         rendered = (weights.unsqueeze(-1) * colors).sum(dim=0)  # (H, W, 3)
         
